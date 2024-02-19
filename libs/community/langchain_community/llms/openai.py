@@ -1111,11 +1111,12 @@ class OpenAIChat(BaseLLM):
         ):
             if not isinstance(stream_resp, dict):
                 stream_resp = stream_resp.dict()
-            token = stream_resp["choices"][0]["delta"].get("content", "")
-            chunk = GenerationChunk(text=token)
-            yield chunk
-            if run_manager:
-                run_manager.on_llm_new_token(token, chunk=chunk)
+            if len(stream_resp["choices"]) >0:
+                token = stream_resp["choices"][0]["delta"].get("content", "")
+                chunk = GenerationChunk(text=token)
+                yield chunk
+                if run_manager:
+                    run_manager.on_llm_new_token(token, chunk=chunk)
 
     async def _astream(
         self,
